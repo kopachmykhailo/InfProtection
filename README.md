@@ -1,52 +1,77 @@
 
-# Лабораторна робота №1
-## Шифри заміни та перестановки
+# Лабораторна робота №2
+## Квадрат Полібія та шифр Гронсфельда
 
 ### Мета
-Навчитися реалізовувати шифрування та розшифрування,
-перевіряти ключі й тестувати правильність алгоритмів.
+Навчитися:
+- формувати ключовий квадрат 6x6,
+- кодувати символи координатами Полібія,
+- виконувати циклічний зсув за рядками,
+- застосовувати цифровий ключ Гронсфельда,
+- перевіряти обернені операції тестами.
 
 ### Інструменти
-- Python 3.10 або новіший
-- Visual Studio Code
-- Модуль unittest
+- Python 3.10+
 - UTF-8
+- unittest
+- Unicode NFC
 
-### Реалізовані алгоритми
-1. Одноалфавітна підстановка.
-2. Шифр Віженера.
-3. Блокова перестановка.
-4. Вертикальна перестановка.
+### Підтримувані режими
+1. Координатний режим Полібія.
+2. Циклічний зсув за рядками квадрата.
+3. Шифр Гронсфельда.
 
-### Запуск програми
-Приклад шифрування Віженером:
+### Вибір мови
+- `uk` — український алфавіт + цифри 0..2
+- `lat` — латинський алфавіт + цифри 0..9
 
-python cipher_lab.py encrypt --algorithm vigenere --key КЛЮЧ --text "СЛАВА УКРАЇНІ"
+### Команди запуску
+**Побудова квадрата Полібія**
+```bash
+python cipher_lab.py square --lang uk --key "БЕЗПЕКА"
+```
 
-Приклад розшифрування:
+**Координатний метод Полібія**
+```bash
+python cipher_lab.py encrypt --algorithm coordinates --lang uk --key "БЕЗПЕКА" --text "СЛАВА"
+python cipher_lab.py decrypt --algorithm coordinates --lang uk --key "БЕЗПЕКА" --text "44 35 16 21 16"
+python cipher_lab.py encrypt --algorithm coordinates --lang lat --key "SECURITY" --text "HELLO"
+```
 
-python cipher_lab.py decrypt --algorithm vigenere --key КЛЮЧ --text "ВЬЮЩК ДЇККЧЛД"
+**Циклічний зсув за рядками**
+```bash
+python cipher_lab.py encrypt --algorithm row_shift --lang uk --key "БЕЗПЕКА" --text "СЛАВА"
+python cipher_lab.py decrypt --algorithm row_shift --lang uk --key "БЕЗПЕКА" --text "ЧТЖИЖ"
+```
 
-### Запуск тестів
-python -m unittest discover -s tests -v
+**Шифр Гронсфельда**
+```bash
+python cipher_lab.py encrypt --algorithm gronsfeld --lang uk --key "31415" --text "СЛАВА"
+python cipher_lab.py decrypt --algorithm gronsfeld --lang uk --key "31415" --text "ФМҐГД"
+python cipher_lab.py encrypt --algorithm gronsfeld --lang lat --key "2718" --text "HELLO WORLD"
+```
 
 ### Робота з файлами
-Для читання тексту з файла використовуйте --input,
-а для збереження результату --output.
+```bash
+python cipher_lab.py encrypt --algorithm gronsfeld --lang uk --key "31415" --input input.txt --output output.txt
+```
 
-Приклад:
+### Запуск тестів
+```bash
+python -m unittest discover -s tests -v
+```
 
-python cipher_lab.py encrypt --algorithm vigenere --key КЛЮЧ --input input.txt --output output.txt
+### Важливі правила
+- Вхідні та вихідні рядки нормалізуються через Unicode NFC.
+- Літери переводяться у верхній регістр.
+- У координатному режимі токени мають вигляд `rowcol`, розділені пробілами.
+- У шифрі Гронсфельда ключ зберігається як рядок цифр; сторонні символи не споживають цифру ключа.
+- Порожній ключ, нецифровий ключ або ключ, що складається лише з нулів, є некоректним.
 
-### Особливості
-Текст нормалізується до Unicode NFC і переводиться
-у верхній регістр. Пробіли та розділові знаки
-зберігаються в шифрах підстановки та Віженера.
-
-Неповний останній блок блокової перестановки
-залишається без змін. Вертикальна перестановка
-доповнює текст символом Х і зберігає кількість
-доповнень для подальшого розшифрування.
-
-Ці алгоритми мають навчальне призначення і не
-використовуються для захисту реальних даних.
+### Контрольні вектори
+- Український Polybius coordinates: `СЛАВА -> 44 35 16 21 16`
+- Латинський Polybius coordinates: `HELLO -> 32 12 35 35 42`
+- Український row shift: `СЛАВА -> ЧТЖИЖ`
+- Латинський row shift: `HELLO -> OYVVZ`
+- Український Gronsfeld: `СЛАВА -> ФМҐГД`
+- Латинський Gronsfeld: `HELLO WORLD -> JLMTQ DPZNK`

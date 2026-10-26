@@ -12,6 +12,14 @@ from cipher_lab import (
     block_decrypt,
     column_encrypt,
     column_decrypt,
+    build_square,
+    format_square,
+    polybius_coordinates_encrypt,
+    polybius_coordinates_decrypt,
+    polybius_row_shift_encrypt,
+    polybius_row_shift_decrypt,
+    gronsfeld_encrypt,
+    gronsfeld_decrypt,
 )
 
 
@@ -127,6 +135,84 @@ class CipherTests(unittest.TestCase):
                 column_decrypt(encrypted, column_key, padding),
                 prepared
             )
+
+    def test_polybius_coordinates_vectors(self):
+        self.assertEqual(
+            polybius_coordinates_encrypt("СЛАВА", "БЕЗПЕКА", "uk"),
+            "44 35 16 21 16"
+        )
+        self.assertEqual(
+            polybius_coordinates_decrypt("44 35 16 21 16", "БЕЗПЕКА", "uk"),
+            "СЛАВА"
+        )
+        self.assertEqual(
+            polybius_coordinates_encrypt("HELLO", "SECURITY", "lat"),
+            "32 12 35 35 42"
+        )
+        self.assertEqual(
+            polybius_coordinates_decrypt("32 12 35 35 42", "SECURITY", "lat"),
+            "HELLO"
+        )
+
+    def test_polybius_row_shift_vectors(self):
+        self.assertEqual(
+            polybius_row_shift_encrypt("СЛАВА", "БЕЗПЕКА", "uk"),
+            "ЧТЖИЖ"
+        )
+        self.assertEqual(
+            polybius_row_shift_decrypt("ЧТЖИЖ", "БЕЗПЕКА", "uk"),
+            "СЛАВА"
+        )
+        self.assertEqual(
+            polybius_row_shift_encrypt("HELLO", "SECURITY", "lat"),
+            "OYVVZ"
+        )
+        self.assertEqual(
+            polybius_row_shift_decrypt("OYVVZ", "SECURITY", "lat"),
+            "HELLO"
+        )
+
+    def test_gronsfeld_vectors(self):
+        self.assertEqual(
+            gronsfeld_encrypt("СЛАВА", "31415", "uk"),
+            "ФМҐГД"
+        )
+        self.assertEqual(
+            gronsfeld_decrypt("ФМҐГД", "31415", "uk"),
+            "СЛАВА"
+        )
+        self.assertEqual(
+            gronsfeld_encrypt("УКРАЇНІ", "31415", "uk"),
+            "ЦЛФБНРЇ"
+        )
+        self.assertEqual(
+            gronsfeld_decrypt("ЦЛФБНРЇ", "31415", "uk"),
+            "УКРАЇНІ"
+        )
+        self.assertEqual(
+            gronsfeld_encrypt("HELLO WORLD", "2718", "lat"),
+            "JLMTQ DPZNK"
+        )
+        self.assertEqual(
+            gronsfeld_decrypt("JLMTQ DPZNK", "2718", "lat"),
+            "HELLO WORLD"
+        )
+
+    def test_square_generation(self):
+        square = build_square("БЕЗПЕКА", "uk")
+        self.assertEqual(len(square), 6)
+        self.assertEqual(len(square[0]), 6)
+        self.assertEqual(len({symbol for row in square for symbol in row}), 36)
+        self.assertEqual(
+            format_square(square),
+            "   1 2 3 4 5 6\n"
+            "1  Б Е З П К А\n"
+            "2  В Г Ґ Д Є Ж\n"
+            "3  И І Ї Й Л М\n"
+            "4  Н О Р С Т У\n"
+            "5  Ф Х Ц Ч Ш Щ\n"
+            "6  Ь Ю Я 0 1 2"
+        )
 
 
 if __name__ == "__main__":
