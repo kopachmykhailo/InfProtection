@@ -3,3 +3,6 @@ __pycache__/
 .venv/
 venv/
 .env
+key.b64
+ciphertext.b64
+recovered.txt
